@@ -152,25 +152,49 @@ template<typename ValueType>
 class ListIterator : public std::iterator<std::input_iterator_tag, ValueType>
 {
 private:
+	//Текущий элемент.
 	Element<ValueType>* ptr;
 public:
+	//Конструкторы.
 	ListIterator() { ptr = NULL; }
 	//ListIterator(ValueType* p) { ptr = p; }
 	ListIterator(Element<ValueType>* p) { ptr = p; }
 	ListIterator(const ListIterator& it) { ptr = it.ptr; }
+
+	//Перемещение с помощью итераторов.
+	ListIterator& operator++()
+	{
+		if (ptr != NULL)
+		{
+			ptr = ptr.getNext();
+		}
+		return *this;
+	}
+	ListIterator& operator++(int v)
+	{
+		if (ptr != NULL)
+		{
+			ptr = ptr.getNext();
+		}
+		return *this;
+	}
+	//Присваивание.
+	ListIterator& operator=(const ListIterator& it) { ptr = it.ptr; return *this; }
+	ListIterator& operator=(Element<ValueType>* p) { ptr = p; return *this; }
+
+	//Проверка итераторов на равенство.
 	bool operator!=(ListIterator const& other) const { return ptr != other.ptr; }
 	bool operator==(ListIterator const& other) const { return ptr == other.ptr; } //need for BOOST_FOREACH
 
+	//Получить значение.
 	Element<ValueType>& operator*()
 	{
 		return *ptr;
 	}
-	ListIterator& operator++() { ptr = ptr->getNext(); return *this; }
-	ListIterator& operator++(int v) { ptr = ptr->getNext(); return*this; }
-	ListIterator& operator=(const ListIterator& it) { ptr = it.ptr; return *this; }
-	ListIterator& operator=(Element<ValueType>* p) { ptr = p; return *this; }
+
 };
 
+//Класс итерируемый список - наследник связного списка, родитель для класс Стек.
 template <class T>
 class IteratedLinkedList : public LinkedListParent<T>
 {
@@ -190,6 +214,40 @@ public:
 	}
 };
 
+template <class T>
+class Stack : public LinkedListParent<T>//Мой класс - стек.
+{//Стек элементы добавляются в конец, извлекаются с конца.
+public:
+	Stack() : LinkedListParent<T>() { cout << "\nStack constructor"; }
+	virtual ~Stack() { cout << "\nStack destructor"; }
+
+
+	virtual Element<T>* push(T value) override
+	{
+		if (num > 0)
+		{
+			Element<T>* newElem = new Element<T>();
+			tail->setNext(newElem);
+			newElem->setPrevious(tail);
+			//tail=tail->getNext();  //LinkesListParent::tail... - на новых компиляторах...
+			LinkesListParent::tail = tail->getNext();
+		}
+		else
+		{
+
+
+
+
+
+		}
+		num = num + 1;
+		return tail;
+	}
+
+	//pop()
+	//filter()
+
+};
 
 
 int main()
