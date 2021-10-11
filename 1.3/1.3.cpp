@@ -242,68 +242,30 @@ public:
 
 	virtual Element<T>* pop() override //Удаляет последий элемент.
 	{
-		//if (LinkedListParent<T>::num > 0)
-		if (LinkedListParent<T>::tail->getPrevious() != NULL)
+		if (LinkedListParent<T>::num > 1)	
 		{
 			Element<T>* temp = LinkedListParent<T>::tail;
 			LinkedListParent<T>::tail = LinkedListParent<T>::tail->getPrevious();
 			LinkedListParent<T>::tail->setNext(NULL);
-			delete temp;
+			temp->setNext(NULL);
+			temp->setPrevious(NULL);
 			LinkedListParent<T>::num = LinkedListParent<T>::num - 1;
-			return LinkedListParent<T>::tail;
+			return temp;
 		}
 		else
-		{
+		{//Последний элемент (попадем при LinkedListParent<T>::num=1).
 			cout << "\nList is empty";
 			Element<T>* temp = LinkedListParent<T>::tail;
-			LinkedListParent<T>::tail->setPrevious(NULL);
-			LinkedListParent<T>::head = LinkedListParent<T>::tail;
+			LinkedListParent<T>::head = NULL;
+			LinkedListParent<T>::tail = NULL;
 			LinkedListParent<T>::num = LinkedListParent<T>::num - 1;
-			delete temp;
-			return LinkedListParent<T>::tail;
-			//	
-
-
-	//			Element<T>* temp = LinkedListParent<T>::tail;
-	//			LinkedListParent<T>::tail->setNext(NULL);
-	//			LinkedListParent<T>::tail->setPrevious(NULL);
-	//			delete temp;
-	//			LinkedListParent<T>::head = LinkedListParent<T>::tail;
-	//			
-			//	return LinkedListParent<T>::tail;
-
-		}
-
-
-
-		/*
-		if (LinkedListParent<T>::num > 1)
-		{
-			Element<T>* temp = LinkedListParent<T>::tail->getPrevious();
-			temp->setNext(nullptr);
-			delete LinkedListParent<T>::tail;
-			LinkedListParent<T>::tail = temp;
-			LinkedListParent<T>::num = LinkedListParent<T>::num - 1;
+			temp->setNext(NULL);
+			temp->setPrevious(NULL);
 			return temp;
 		}
-		else
-		{cout << "\nList is empty" << endl;
-			Element<T>* temp = LinkedListParent<T>::tail;
-			temp->setNext(nullptr);
-			temp->setPrevious(nullptr);
-			delete LinkedListParent<T>::head;
-			delete LinkedListParent<T>::tail;
-			LinkedListParent<T>::tail = temp;
-			LinkedListParent<T>::head = LinkedListParent<T>::tail;
-			LinkedListParent<T>::num = LinkedListParent<T>::num - 1;
-			return temp;
-		}
-		*/
 	}
 
-
 	//filter()
-
 };
 
 
@@ -318,8 +280,9 @@ int main()
 	S.pop();
 	S.pop();
 	cout << S;
-	//	S.push(333);
-	//	cout << S;
+
+	S.push(333);
+	cout << S;
 
 	cout << "\n";
 }
