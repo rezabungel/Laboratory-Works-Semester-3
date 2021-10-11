@@ -20,7 +20,7 @@
 
 using namespace std;
 
-template <class T>
+template<class T>
 class Element
 {
 	//элемент связного списка
@@ -35,7 +35,7 @@ public:
 	{
 		field = value;
 		next = next_ptr;
-		prev - prev_ptr;
+		prev = prev_ptr;
 	}
 	//доступ к полю *next
 	virtual Element* getNext() { return next; }
@@ -80,6 +80,7 @@ public:
 		//конструктор без параметров
 		cout << "\nParent constructor";
 		head = NULL;
+		tail = NULL;
 		num = 0;
 	}
 
@@ -215,36 +216,92 @@ public:
 };
 
 template <class T>
-class Stack : public LinkedListParent<T>//Мой класс - стек.
+class Stack : public IteratedLinkedList<T>//Мой класс - стек.
 {//Стек элементы добавляются в конец, извлекаются с конца.
 public:
-	Stack() : LinkedListParent<T>() { cout << "\nStack constructor"; }
+	Stack() : IteratedLinkedList<T>() { cout << "\nStack constructor"; }
 	virtual ~Stack() { cout << "\nStack destructor"; }
-
 
 	virtual Element<T>* push(T value) override
 	{
-		if (num > 0)
+		if (LinkedListParent<T>::num > 0)
 		{
-			Element<T>* newElem = new Element<T>();
-			tail->setNext(newElem);
-			newElem->setPrevious(tail);
-			//tail=tail->getNext();  //LinkesListParent::tail... - на новых компиляторах...
-			LinkesListParent::tail = tail->getNext();
+			Element<T>* newElem = new Element<T>(value);
+			LinkedListParent<T>::tail->setNext(newElem);
+			newElem->setPrevious(LinkedListParent<T>::tail);
+			LinkedListParent<T>::tail = LinkedListParent<T>::tail->getNext();
 		}
 		else
 		{
-
-
-
-
-
+			LinkedListParent<T>::tail = new Element<T>(value);
+			LinkedListParent<T>::head = LinkedListParent<T>::tail;
 		}
-		num = num + 1;
-		return tail;
+		LinkedListParent<T>::num = LinkedListParent<T>::num + 1;
+		return LinkedListParent<T>::tail;
 	}
 
-	//pop()
+	virtual Element<T>* pop() override //Удаляет последий элемент.
+	{
+		//if (LinkedListParent<T>::num > 0)
+		if (LinkedListParent<T>::tail->getPrevious() != NULL)
+		{
+			Element<T>* temp = LinkedListParent<T>::tail;
+			LinkedListParent<T>::tail = LinkedListParent<T>::tail->getPrevious();
+			LinkedListParent<T>::tail->setNext(NULL);
+			delete temp;
+			LinkedListParent<T>::num = LinkedListParent<T>::num - 1;
+			return LinkedListParent<T>::tail;
+		}
+		else
+		{
+			cout << "\nList is empty";
+			Element<T>* temp = LinkedListParent<T>::tail;
+			LinkedListParent<T>::tail->setPrevious(NULL);
+			LinkedListParent<T>::head = LinkedListParent<T>::tail;
+			LinkedListParent<T>::num = LinkedListParent<T>::num - 1;
+			delete temp;
+			return LinkedListParent<T>::tail;
+			//	
+
+
+	//			Element<T>* temp = LinkedListParent<T>::tail;
+	//			LinkedListParent<T>::tail->setNext(NULL);
+	//			LinkedListParent<T>::tail->setPrevious(NULL);
+	//			delete temp;
+	//			LinkedListParent<T>::head = LinkedListParent<T>::tail;
+	//			
+			//	return LinkedListParent<T>::tail;
+
+		}
+
+
+
+		/*
+		if (LinkedListParent<T>::num > 1)
+		{
+			Element<T>* temp = LinkedListParent<T>::tail->getPrevious();
+			temp->setNext(nullptr);
+			delete LinkedListParent<T>::tail;
+			LinkedListParent<T>::tail = temp;
+			LinkedListParent<T>::num = LinkedListParent<T>::num - 1;
+			return temp;
+		}
+		else
+		{cout << "\nList is empty" << endl;
+			Element<T>* temp = LinkedListParent<T>::tail;
+			temp->setNext(nullptr);
+			temp->setPrevious(nullptr);
+			delete LinkedListParent<T>::head;
+			delete LinkedListParent<T>::tail;
+			LinkedListParent<T>::tail = temp;
+			LinkedListParent<T>::head = LinkedListParent<T>::tail;
+			LinkedListParent<T>::num = LinkedListParent<T>::num - 1;
+			return temp;
+		}
+		*/
+	}
+
+
 	//filter()
 
 };
@@ -252,6 +309,18 @@ public:
 
 int main()
 {
-	cout << "Hello World!\n";
+	Stack<int> S;
+	S.push(1);
+	S.push(2);
+	S.push(3);
+	cout << S;
+	S.pop();
+	S.pop();
+	S.pop();
+	cout << S;
+	//	S.push(333);
+	//	cout << S;
+
+	cout << "\n";
 }
 
