@@ -20,6 +20,11 @@
 
 using namespace std;
 
+bool conditions(int value) //Проверка на кратность 3. Если да, то кратное. Если нет, то не кратное.
+{
+	return (value % 3 == 0);
+}
+
 template<class T>
 class Element
 {
@@ -167,7 +172,7 @@ public:
 	{
 		if (ptr != NULL)
 		{
-			ptr = ptr.getNext();
+			ptr = ptr->getNext();
 		}
 		return *this;
 	}
@@ -175,7 +180,7 @@ public:
 	{
 		if (ptr != NULL)
 		{
-			ptr = ptr.getNext();
+			ptr = ptr->getNext();
 		}
 		return *this;
 	}
@@ -222,7 +227,7 @@ public:
 	Stack() : IteratedLinkedList<T>() { cout << "\nStack constructor"; }
 	virtual ~Stack() { cout << "\nStack destructor"; }
 
-	virtual Element<T>* push(T value) override
+	virtual Element<T>* push(T value)
 	{
 		if (LinkedListParent<T>::num > 0)
 		{
@@ -240,9 +245,9 @@ public:
 		return LinkedListParent<T>::tail;
 	}
 
-	virtual Element<T>* pop() override //Удаляет последий элемент.
+	virtual Element<T>* pop()  //Удаляет последий элемент.
 	{
-		if (LinkedListParent<T>::num > 1)	
+		if (LinkedListParent<T>::num > 1)
 		{
 			Element<T>* temp = LinkedListParent<T>::tail;
 			LinkedListParent<T>::tail = LinkedListParent<T>::tail->getPrevious();
@@ -265,8 +270,70 @@ public:
 		}
 	}
 
-	//filter()
+	Stack<T> filter(bool (*ptr_func)(T))//Фильтруем список. Условие числа кратные 3.
+	{
+		Stack<T> result;
+		IteratedLinkedList<T>::iterator = LinkedListParent<T>::head;
+		while (IteratedLinkedList<T>::iterator != NULL)
+		{
+			if (ptr_func((*IteratedLinkedList<T>::iterator).getValue()))
+			{
+				result.push((*IteratedLinkedList<T>::iterator).getValue());
+			}
+			IteratedLinkedList<T>::iterator++;
+		}
+		return result;
+	}
 };
+
+template <class T>
+class D : public Stack<T>//Мой класс - стек.
+{
+public:
+	D() : Stack<T>() { cout << "\nD constructor"; }
+	virtual ~D() { cout << "\nD destructor"; }
+
+	virtual Element<T>* push(T value) //Добавление элементов с сохранением отсортированности.
+	{
+		if (LinkedListParent<T>::num > 0)
+		{
+			IteratedLinkedList<T>::iterator = LinkedListParent<T>::head;
+			Element<T>* newElem = new Element<T>(value);
+			while (IteratedLinkedList<T>::iterator != NULL && (*IteratedLinkedList<T>::iterator).getValue() <= newElem->getValue())
+			{
+				IteratedLinkedList<T>::iterator++;
+			}
+			if (IteratedLinkedList<T>::iterator == NULL)
+			{
+				LinkedListParent<T>::tail->setNext(newElem);
+				newElem->setPrevious(LinkedListParent<T>::tail);
+				LinkedListParent<T>::tail = LinkedListParent<T>::tail->getNext();
+			}
+			else if (IteratedLinkedList<T>::iterator == LinkedListParent<T>::head)
+			{
+				LinkedListParent<T>::head->setPrevious(newElem);
+				newElem->setNext(LinkedListParent<T>::head);
+				LinkedListParent<T>::head = LinkedListParent<T>::head->getPrevious();
+			}
+			else 
+			{
+				Element<T>* temp = (*IteratedLinkedList<T>::iterator).getPrevious();
+				newElem->setNext(temp->getNext());
+				(*IteratedLinkedList<T>::iterator).setPrevious(newElem);
+				newElem->setPrevious(temp);
+				temp->setNext(newElem);
+			}
+		}
+		else
+		{
+			LinkedListParent<T>::tail = new Element<T>(value);
+			LinkedListParent<T>::head = LinkedListParent<T>::tail;
+		}
+		LinkedListParent<T>::num = LinkedListParent<T>::num + 1;
+		return LinkedListParent<T>::tail;
+	}
+};
+
 
 
 int main()
@@ -276,14 +343,31 @@ int main()
 	S.push(2);
 	S.push(3);
 	cout << S;
+
 	S.pop();
 	S.pop();
 	S.pop();
 	cout << S;
 
-	S.push(333);
+	S.push(9);
+	S.push(1);
+	S.push(-4);
+	S.push(-3);
+	S.push(5);
+	S.push(8);
+	S.push(33);
 	cout << S;
+	Stack<int> Filtered_list;
+	Filtered_list = S.filter(conditions);
+	cout << endl << endl << "Filtered_list" << Filtered_list;
 
-	cout << "\n";
+	D<int> A; //Элементы добавятся с сохранением отсортированности.
+	A.push(1);
+	A.push(7);
+	A.push(-4);
+	A.push(1);
+	A.push(191);
+	A.push(53);
+	A.push(9);
+	cout << endl << A;
 }
-
