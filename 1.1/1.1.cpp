@@ -71,7 +71,7 @@ void pop(list<T>& lst, T nomer)
 }
 
 template<class T>
-list<T> filter(list<T> base, bool (*ptr)(T))//Фильтруем список. Условие числа кратные 3.
+list<T> filter(list<T> &base, bool (*ptr)(T))//Фильтруем список. Условие числа кратные 3.
 {
     list<T> result;
     typename list<T>::iterator p = base.begin();
@@ -87,7 +87,7 @@ list<T> filter(list<T> base, bool (*ptr)(T))//Фильтруем список. �
 }
 
 template<class T>
-void print(list<T> lst)//Вывод списка.
+void print(list<T> &lst)//Вывод списка.
 {
     typename list<T>::iterator p = lst.begin();
     while (p != lst.end())

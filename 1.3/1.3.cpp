@@ -197,7 +197,6 @@ public:
 	{
 		return *ptr;
 	}
-
 };
 
 //Класс итерируемый список - наследник связного списка, родитель для класс Стек.
@@ -315,7 +314,7 @@ public:
 				newElem->setNext(LinkedListParent<T>::head);
 				LinkedListParent<T>::head = LinkedListParent<T>::head->getPrevious();
 			}
-			else 
+			else
 			{
 				Element<T>* temp = (*IteratedLinkedList<T>::iterator).getPrevious();
 				newElem->setNext(temp->getNext());
@@ -333,8 +332,6 @@ public:
 		return LinkedListParent<T>::tail;
 	}
 };
-
-
 
 int main()
 {
