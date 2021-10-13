@@ -2,8 +2,8 @@
 // Святченко Артём Андреевич
 
 /*
-Постройте итераторы для перемещения по списку. Переопределите 
-функцию вывода содержимого списка с помощью итераторов. Итераторы 
+Постройте итераторы для перемещения по списку. Переопределите
+функцию вывода содержимого списка с помощью итераторов. Итераторы
 двунаправленные.
 */
 
@@ -113,20 +113,28 @@ public:
 	template<class T> friend istream& operator>> (istream& ustream, LinkedListParent<T>& obj);
 };
 
+template<typename ValueType>
+class ListIterator;//Предварительное объявление класса необходимо для работы переопределения operator << в LinkedListParent.
+
 template<class T>
-ostream& operator << (ostream& ustream, LinkedListParent<T>& obj)
+ostream& operator << (ostream& ustream, LinkedListParent<T>& obj) //Переделаем, используя итератор.
 {
+	ListIterator<T> iterator_current;
 	if (typeid(ustream).name() == typeid(ofstream).name())
 	{
 		ustream << obj.num << "\n";
-		for (Element<T>* current = obj.getBegin(); current != NULL; current = current->getNext())
-			ustream << current->getValue() << " ";
+		for (iterator_current = obj.getBegin(); iterator_current != NULL; iterator_current++)
+		{
+			ustream << (*iterator_current).getValue() << " ";
+		}
 		return ustream;
 	}
 	ustream << "\nLength: " << obj.num << "\n";
 	int i = 0;
-	for (Element<T>* current = obj.getBegin(); current != NULL; current = current->getNext(), i++)
-		ustream << "arr[" << i << "] = " << current->getValue() << "\n";
+	for (iterator_current = obj.getBegin(); iterator_current != NULL; iterator_current++, i++)
+	{
+		ustream << "arr[" << i << "] = " << (*iterator_current).getValue() << "\n";
+	}
 	return ustream;
 }
 
@@ -176,6 +184,23 @@ public:
 		}
 		return *this;
 	}
+	ListIterator& operator--()
+	{
+		if (ptr != NULL)
+		{
+			ptr = ptr->getPrevious();
+		}
+		return *this;
+	}
+	ListIterator& operator--(int v)
+	{
+		if (ptr != NULL)
+		{
+			ptr = ptr->getPrevious();
+		}
+		return *this;
+	}
+
 	//Присваивание.
 	ListIterator& operator=(const ListIterator& it) { ptr = it.ptr; return *this; }
 	ListIterator& operator=(Element<ValueType>* p) { ptr = p; return *this; }
@@ -189,9 +214,18 @@ public:
 	{
 		return *ptr;
 	}
+
+	template<class T> friend ostream& operator << (ostream& ustream, ListIterator<ValueType>& obj);
 };
 
-//Класс итерируемый список - наследник связного списка, родитель для класс Стек.
+template<class ValueType>
+ostream& operator << (ostream& ustream, ListIterator<ValueType>& obj)
+{
+	ustream << (*obj).getValue() << endl;
+	return ustream;
+}
+
+//Класс итерируемый список - наследник связного списка, родитель для класс Стек.	
 template <class T>
 class IteratedLinkedList : public LinkedListParent<T>
 {
@@ -328,4 +362,25 @@ public:
 int main()
 {
 	Stack<int> S;
+	S.push(1);
+	S.push(2);
+	S.push(3);
+
+	cout << endl << S;
+
+	ListIterator<int> p;
+	cout << endl << "Start with the head." << endl;
+	p = S.getBegin();
+	while (p != NULL)
+	{
+		cout << p;
+		p++;
+	}
+	cout << endl << "Start with the tail." << endl;
+	p = S.getEnd();
+	while (p != NULL)
+	{
+		cout << p;
+		p--;
+	}
 }
