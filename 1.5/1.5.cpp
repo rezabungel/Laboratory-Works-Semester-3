@@ -2,22 +2,143 @@
 // Святченко Артём Андреевич
 
 /*
-Постройте шаблон класса списка из задания в пункте 3 (стек), который
-хранит объекты класса C (из задания в пункте 2), сохраняя упорядоченность
-по приоритету: полю или группе полей, указанных в варианте.
+Постройте шаблон класса списка, который наследуется от класса реализованного
+в задании пункт 3 (стек), который хранит объекты класса C (из задания в пункте 2),
+сохраняя упорядоченность по приоритету: полю или группе полей, указанных в варианте.
 
-Класс С
+Класс С (Класс school)
 «Школьник».
 Минимальный набор полей: фамилия, имя, пол, класс, дата рождения, адрес.
 Приоритет
 Класс; дата рождения (по возрастанию); фамилия и имя (по возрастанию).
 */
 
-
 #include <iostream>
 #include <fstream>
+#include <string>
 
 using namespace std;
+
+class school
+{
+private:
+	string surname;//Фамилия.
+	string name;//Имя.
+	bool floor;//Пол (0-женский, 1-мужской).
+	int classroom;//Класс.
+	string data;//Жата рождения (год, месяц, день).
+	string address;//Адрес(Город).
+public:
+	school()
+	{
+		surname = "Фамилия?";
+		name = "Имя?";
+		floor = false;
+		classroom = 0;
+		data = "дата рождения?";
+		address = "адрес?";
+	}
+	school(string Xsurname, string Xname, bool Xfloor, int Xclassroom, string Xdata, string Xaddress) //Конструктор.
+	{
+		surname = Xsurname;
+		name = Xname;
+		floor = Xfloor;
+		classroom = Xclassroom;
+		data = Xdata;
+		address = Xaddress;
+	}
+	//Сеттеры.
+	void setsurname(string a) //Запись фамилии.
+	{
+		surname = a;
+	}
+	void setname(string a) //Запись имени.
+	{
+		name = a;
+	}
+	void setfloor(bool a) //Запись пола.
+	{
+		floor = a;
+	}
+	void setclassroom(int a) //Запись класса.
+	{
+		classroom = a;
+	}
+	void setdata(string a) //Запись даты.
+	{
+		data = a;
+	}
+	void setaddress(string a) //Запись адреса.
+	{
+		address = a;
+	}
+	//Геттеры.
+	string getsurname() //Выдать фамилию.
+	{
+		return surname;
+	}
+	string setname() //Выдать имя.
+	{
+		return name;
+	}
+	bool getfloor() //Выдать пол.
+	{
+		return floor;
+	}
+	int getclassroom() //Выдать класс.
+	{
+		return classroom;
+	}
+	string getdata(string a) //Выдать дату.
+	{
+		return data;
+	}
+	string getaddress(string a) //Выдать адрес.
+	{
+		return address;
+	}
+	//Приоритет: Класс (по убыванию); дата рождения (по возрастанию); фамилия и имя(по возрастанию).
+	bool operator > (const school& other)
+	{
+		if (this->classroom > other.classroom)
+		{
+			return true;
+		}
+		else if (this->classroom == other.classroom)
+		{
+			if (this->data < other.data)
+			{
+				return true;
+			}
+			else if (this->data == other.data)
+			{
+				if (this->surname < other.surname)
+				{
+					return true;
+				}
+				else if (this->name < other.name)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	//Вывод информации.
+	void print()
+	{
+		char Xfloor;
+		if (floor == false)
+		{
+			Xfloor = 'Ж';
+		}
+		else
+		{
+			Xfloor = 'М';
+		}
+		cout << "Школьник:\t" << surname << " " << name << ". Пол:\t" << Xfloor << ". Класс:\t" << classroom << ". Дата рождения (год.месяц.цисло):\t" << data << " Адрес:\t" << address << endl;
+	}
+};
 
 bool conditions(int value) //Проверка на кратность 3. Если да, то кратное. Если нет, то не кратное.
 {
@@ -331,7 +452,7 @@ public:
 		{
 			IteratedLinkedList<T>::iterator = LinkedListParent<T>::head;
 			Element<T>* newElem = new Element<T>(value);
-			while (IteratedLinkedList<T>::iterator != NULL && (*IteratedLinkedList<T>::iterator).getValue() <= newElem->getValue())
+			while (IteratedLinkedList<T>::iterator != NULL && (*IteratedLinkedList<T>::iterator).getValue() > newElem->getValue())
 			{
 				IteratedLinkedList<T>::iterator++;
 			}
@@ -364,30 +485,59 @@ public:
 		LinkedListParent<T>::num = LinkedListParent<T>::num + 1;
 		return LinkedListParent<T>::tail;
 	}
+
+	void printlist()
+	{
+		IteratedLinkedList<school>::iterator = LinkedListParent<school>::head;
+		while (IteratedLinkedList<school>::iterator != NULL)
+		{
+			(*IteratedLinkedList<school>::iterator).getValue().print();
+			IteratedLinkedList<school>::iterator++;
+		}
+	}
 };
 
 int main()
 {
-	Stack<int> S;
-	S.push(1);
-	S.push(2);
-	S.push(3);
+	setlocale(LC_ALL, "Russian");
 
-	cout << endl << S;
+	D<school> B;
+	school A1("Гусев", "Никита", true, 11, "2004.10.10", "Москва");
+	school A2("Любимова", "Милана", false, 10, "2005.09.11", "Краснодар");
+	school A3("Фролов", "Роман", true, 5, "2010.01.05", "Волгоград");
+	school A4("Журавлев", "Роман", true, 1, "2014.09.11", "Москва");
+	school A5("Иванова", "Алиса", false, 4, "2011.12.11", "Дубна");
+	school A6("Иванова", "Галя", false, 4, "2011.12.11", "Дубна");
+	school A7("Степанов", "Степан", true, 7, "2008.11.15", "Москва");
+	school A8("Власов", "Матвей", true, 7, "2008.11.17", "Мытищи");
+	school A9("Ковалев", "Даниил", true, 10, "2005.07.07", "Москва");
+	school A10("Макаров", "Тигран", true, 11, "2004.11.11", "Москва");
+	cout << endl;
+	B.push(A1);
+	B.push(A2);
+	B.push(A3);
+	B.push(A4);
+	B.push(A5);
+	B.push(A6);
+	B.push(A7);
+	B.push(A8);
+	B.push(A9);
+	B.push(A10);
 
-	ListIterator<int> p;
-	cout << endl << "Start with the head." << endl;
-	p = S.getBegin();
-	while (p != NULL)
-	{
-		cout << p;
-		p++;
-	}
-	cout << endl << "Start with the tail." << endl;
-	p = S.getEnd();
-	while (p != NULL)
-	{
-		cout << p;
-		p--;
-	}
+	B.printlist();
+	cout << endl;
+	cout << endl;
+	cout << endl;
+	cout << endl;
+	cout << endl;
+	B.pop();
+	B.pop();
+	B.pop();
+	B.pop();
+	B.pop();
+	B.pop();
+	B.pop();
+	B.pop();
+	B.printlist();
+	;
 }
