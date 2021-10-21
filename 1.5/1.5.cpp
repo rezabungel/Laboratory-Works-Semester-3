@@ -77,7 +77,7 @@ public:
 	{
 		return surname;
 	}
-	string setname() //Выдать имя.
+	string getname() //Выдать имя.
 	{
 		return name;
 	}
@@ -89,16 +89,16 @@ public:
 	{
 		return classroom;
 	}
-	string getdata(string a) //Выдать дату.
+	string getdata() //Выдать дату.
 	{
 		return data;
 	}
-	string getaddress(string a) //Выдать адрес.
+	string getaddress() //Выдать адрес.
 	{
 		return address;
 	}
 	//Приоритет: Класс (по убыванию); дата рождения (по возрастанию); фамилия и имя(по возрастанию).
-	bool operator > (const school& other)
+	bool operator > (const school& other) //Переопределение операции > отличается от переопределения в 1.2
 	{
 		if (this->classroom > other.classroom)
 		{
@@ -124,11 +124,15 @@ public:
 		}
 		return false;
 	}
-	//Вывод информации.
-	void print()
+
+	friend ostream& operator<< (ostream& ustream, school& obj);	//Вывод информации.
+};
+
+ostream& operator<< (ostream& ustream, school& obj)
+{
 	{
 		char Xfloor;
-		if (floor == false)
+		if (obj.getfloor() == false)
 		{
 			Xfloor = 'Ж';
 		}
@@ -136,9 +140,13 @@ public:
 		{
 			Xfloor = 'М';
 		}
-		cout << "Школьник:\t" << surname << " " << name << ". Пол:\t" << Xfloor << ". Класс:\t" << classroom << ". Дата рождения (год.месяц.цисло):\t" << data << " Адрес:\t" << address << endl;
+		ustream << "Школьник:\t" << obj.getsurname() << " " << obj.getname() << ". Пол:\t" << Xfloor << ". Класс:\t" << obj.getclassroom() << ". Дата рождения (год.месяц.цисло):\t" << obj.getdata() << " Адрес:\t" << obj.getaddress();
+		return ustream;
 	}
-};
+}
+
+
+
 
 bool conditions(int value) //Проверка на кратность 3. Если да, то кратное. Если нет, то не кратное.
 {
@@ -440,7 +448,7 @@ public:
 };
 
 template <class T>
-class D : public Stack<T>//Мой класс - стек.
+class D : public Stack<T> //Элементы будут добавляться, сохраняя упорядоченность.
 {
 public:
 	D() : Stack<T>() { cout << "\nD constructor"; }
@@ -486,22 +494,29 @@ public:
 		return LinkedListParent<T>::tail;
 	}
 
-	void printlist()
-	{
-		IteratedLinkedList<school>::iterator = LinkedListParent<school>::head;
-		while (IteratedLinkedList<school>::iterator != NULL)
-		{
-			(*IteratedLinkedList<school>::iterator).getValue().print();
-			IteratedLinkedList<school>::iterator++;
-		}
-	}
+	template<class T> friend ostream& operator<< (ostream& ustream, D<T>& obj);
 };
+
+template<class T>
+ostream& operator << (ostream& ustream, D<T>& obj) //Переделаем, используя итератор.
+{
+	ustream << "\nLength: " << obj.num << "\n";
+	ListIterator<T> iterator_current;
+	int i = 0;
+	for (iterator_current = obj.getBegin(); iterator_current != NULL; iterator_current++, i++)
+	{
+		ustream << *iterator_current << endl;
+	}
+	return ustream;
+}
+
+
 
 int main()
 {
 	setlocale(LC_ALL, "Russian");
 
-	D<school> B;
+	D<school> People_in_school;
 	school A1("Гусев", "Никита", true, 11, "2004.10.10", "Москва");
 	school A2("Любимова", "Милана", false, 10, "2005.09.11", "Краснодар");
 	school A3("Фролов", "Роман", true, 5, "2010.01.05", "Волгоград");
@@ -513,31 +528,42 @@ int main()
 	school A9("Ковалев", "Даниил", true, 10, "2005.07.07", "Москва");
 	school A10("Макаров", "Тигран", true, 11, "2004.11.11", "Москва");
 	cout << endl;
-	B.push(A1);
-	B.push(A2);
-	B.push(A3);
-	B.push(A4);
-	B.push(A5);
-	B.push(A6);
-	B.push(A7);
-	B.push(A8);
-	B.push(A9);
-	B.push(A10);
+	People_in_school.push(A1);
+	People_in_school.push(A2);
+	People_in_school.push(A3);
+	People_in_school.push(A4);
+	People_in_school.push(A5);
+	People_in_school.push(A6);
+	People_in_school.push(A7);
+	People_in_school.push(A8);
+	People_in_school.push(A9);
+	People_in_school.push(A10);
+	cout << People_in_school;
 
-	B.printlist();
+	cout << endl << "Test pop." << endl;
+	People_in_school.pop();
+	People_in_school.pop();
+	People_in_school.pop();
+	People_in_school.pop();
+	People_in_school.pop();
+	People_in_school.pop();
+	People_in_school.pop();
+	People_in_school.pop();
+	cout << People_in_school;
+
+	D<int> a;
 	cout << endl;
-	cout << endl;
-	cout << endl;
-	cout << endl;
-	cout << endl;
-	B.pop();
-	B.pop();
-	B.pop();
-	B.pop();
-	B.pop();
-	B.pop();
-	B.pop();
-	B.pop();
-	B.printlist();
-	;
+	int q1 = 1;
+	int q2 = 2;
+	int q3 = 3;
+	int q4 = 4;
+	int q5 = 5;
+
+	a.push(q4);
+	a.push(q1);
+	a.push(q2);
+	a.push(q3);
+	a.push(q5);
+
+	cout << a;
 }

@@ -154,7 +154,7 @@ ostream& operator<< (ostream& ustream, school& obj)
 		{
 			Xfloor = 'М';
 		}
-		ustream << "Школьник:\t" << obj.getsurname() << " " << obj.getname() << ". Пол:\t" << Xfloor << ". Класс:\t" << obj.getclassroom() << ". Дата рождения (год.месяц.цисло):\t" << obj.getdata() << " Адрес:\t" << obj.getaddress() << endl;;
+		ustream << "Школьник:\t" << obj.getsurname() << " " << obj.getname() << ". Пол:\t" << Xfloor << ". Класс:\t" << obj.getclassroom() << ". Дата рождения (год.месяц.цисло):\t" << obj.getdata() << " Адрес:\t" << obj.getaddress();
 		return ustream;
 	}
 }
@@ -194,7 +194,7 @@ void printlist(list<T>& L)
 	auto it = L.begin();
 	while (it != L.end())
 	{
-		cout << *it;
+		cout << *it << endl;
 		*it++;
 	}
 }
