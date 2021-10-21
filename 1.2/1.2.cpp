@@ -91,7 +91,7 @@ public:
 	{
 		return surname;
 	}
-	string setname() //Выдать имя.
+	string getname() //Выдать имя.
 	{
 		return name;
 	}
@@ -103,11 +103,11 @@ public:
 	{
 		return classroom;
 	}
-	string getdata(string a) //Выдать дату.
+	string getdata() //Выдать дату.
 	{
 		return data;
 	}
-	string getaddress(string a) //Выдать адрес.
+	string getaddress() //Выдать адрес.
 	{
 		return address;
 	}
@@ -138,11 +138,15 @@ public:
 		}
 		return false;
 	}
-	//Вывод информации.
-	void print()
+
+	friend ostream& operator<< (ostream& ustream, school& obj);	//Вывод информации.
+};
+
+ostream& operator<< (ostream& ustream, school& obj)
+{
 	{
 		char Xfloor;
-		if (floor == false)
+		if (obj.getfloor() == false)
 		{
 			Xfloor = 'Ж';
 		}
@@ -150,9 +154,10 @@ public:
 		{
 			Xfloor = 'М';
 		}
-		cout << "Школьник:\t" << surname << " " << name << ". Пол:\t" << Xfloor << ". Класс:\t" << classroom << ". Дата рождения (год.месяц.цисло):\t" << data << " Адрес:\t" << address << endl;
+		ustream << "Школьник:\t" << obj.getsurname() << " " << obj.getname() << ". Пол:\t" << Xfloor << ". Класс:\t" << obj.getclassroom() << ". Дата рождения (год.месяц.цисло):\t" << obj.getdata() << " Адрес:\t" << obj.getaddress() << endl;;
+		return ustream;
 	}
-};
+}
 
 template<class  T>
 void push(list<T>& L, T element)//Вставка элемента с сохранением приоритета.
@@ -189,7 +194,7 @@ void printlist(list<T>& L)
 	auto it = L.begin();
 	while (it != L.end())
 	{
-		it->print();
+		cout << *it;
 		*it++;
 	}
 }
@@ -229,7 +234,7 @@ int main()
 	cout << endl << endl << endl;
 	school test;
 	test = pop(people);
-	test.print();
+	cout << test;
 	cout << endl << endl << endl;
 	cout << "Список после удаления:" << endl;
 	printlist(people);
