@@ -223,10 +223,26 @@ public:
 	//чисто виртуальная функция: пока не определимся с типом списка, не сможем реализовать удаление
 	virtual Element<T>* pop() = 0;
 
-	virtual ~LinkedListParent()
+	virtual ~LinkedListParent()	//деструктор - освобождение памяти
 	{
-		//деструктор - освобождение памяти
 		cout << "\nParent destructor";
+		Element<T>* temp = NULL;
+		while (LinkedListParent<T>::head != NULL)
+		{
+			if (LinkedListParent<T>::head == LinkedListParent<T>::tail)
+			{
+				delete LinkedListParent<T>::head;
+				LinkedListParent<T>::head = LinkedListParent<T>::tail = NULL;
+			}
+			else
+			{
+				temp = LinkedListParent<T>::head;
+				LinkedListParent<T>::head = LinkedListParent<T>::head->getNext();
+				delete temp;
+				temp = NULL;
+			}
+			num = num - 1;
+		}
 	}
 	//получение элемента по индексу - какова асимптотическая оценка этого действия ?
 	virtual Element<T>* operator[](int i)
@@ -515,8 +531,6 @@ ostream& operator << (ostream& ustream, D<T>& obj) //Переделаем, ис�
 int main()
 {
 	setlocale(LC_ALL, "Russian");
-
-	D<school> People_in_school;
 	school A1("Гусев", "Никита", true, 11, "2004.10.10", "Москва");
 	school A2("Любимова", "Милана", false, 10, "2005.09.11", "Краснодар");
 	school A3("Фролов", "Роман", true, 5, "2010.01.05", "Волгоград");
@@ -527,6 +541,14 @@ int main()
 	school A8("Власов", "Матвей", true, 7, "2008.11.17", "Мытищи");
 	school A9("Ковалев", "Даниил", true, 10, "2005.07.07", "Москва");
 	school A10("Макаров", "Тигран", true, 11, "2004.11.11", "Москва");
+	int B1 = 7;
+	int B2 = 3;
+	int B3 = -6;
+	int B4 = 4;
+	int B5 = 1;
+	int B6 = -7;
+
+	D<school> People_in_school;
 	cout << endl;
 	People_in_school.push(A1);
 	People_in_school.push(A2);
@@ -551,19 +573,19 @@ int main()
 	People_in_school.pop();
 	cout << People_in_school;
 
-	D<int> a;
+	//Тест class D с другим типом данных (не нашим классом).
+	D<int> QQ;
 	cout << endl;
-	int q1 = 1;
-	int q2 = 2;
-	int q3 = 3;
-	int q4 = 4;
-	int q5 = 5;
+	QQ.push(B1);
+	QQ.push(B2);
+	QQ.push(B3);
+	QQ.push(B4);
+	QQ.push(B5);
+	QQ.push(B6);
+	cout << QQ;
 
-	a.push(q4);
-	a.push(q1);
-	a.push(q2);
-	a.push(q3);
-	a.push(q5);
-
-	cout << a;
+	cout << endl << "Test pop." << endl;
+	QQ.pop();
+	QQ.pop();
+	cout << QQ;
 }
