@@ -223,8 +223,9 @@ public:
 	//чисто виртуальная функция: пока не определимся с типом списка, не сможем реализовать удаление
 	virtual Element<T>* pop() = 0;
 
-	virtual ~LinkedListParent()	//деструктор - освобождение памяти
+	virtual ~LinkedListParent()
 	{
+		//деструктор - освобождение памяти
 		cout << "\nParent destructor";
 		Element<T>* temp = NULL;
 		while (LinkedListParent<T>::head != NULL)
@@ -241,7 +242,7 @@ public:
 				delete temp;
 				temp = NULL;
 			}
-			num = num - 1;
+			LinkedListParent<T>::num = LinkedListParent<T>::num - 1;
 		}
 	}
 	//получение элемента по индексу - какова асимптотическая оценка этого действия ?
@@ -447,19 +448,17 @@ public:
 		}
 	}
 
-	Stack<T> filter(bool (*ptr_func)(T))//Фильтруем список. Условие числа кратные 3.
+	virtual void filter(Stack<T>& base, bool (*ptr_func)(T))//Фильтруем список. Условие числа кратные 3.
 	{
-		Stack<T> result;
-		IteratedLinkedList<T>::iterator = LinkedListParent<T>::head;
+		IteratedLinkedList<T>::iterator = this->LinkedListParent<T>::head;
 		while (IteratedLinkedList<T>::iterator != NULL)
 		{
 			if (ptr_func((*IteratedLinkedList<T>::iterator).getValue()))
 			{
-				result.push((*IteratedLinkedList<T>::iterator).getValue());
+				base.push((*IteratedLinkedList<T>::iterator).getValue());
 			}
 			IteratedLinkedList<T>::iterator++;
 		}
-		return result;
 	}
 };
 
@@ -570,10 +569,9 @@ int main()
 	People_in_school.pop();
 	People_in_school.pop();
 	People_in_school.pop();
-	People_in_school.pop();
 	cout << People_in_school;
 
-	//Тест class D с другим типом данных (не нашим классом).
+	//Тест class D с другим произвольным типом данных (не нашим классом).
 	D<int> QQ;
 	cout << endl;
 	QQ.push(B1);

@@ -99,6 +99,23 @@ public:
 	{
 		//деструктор - освобождение памяти
 		cout << "\nParent destructor";
+		Element<T>* temp = NULL;
+		while (LinkedListParent<T>::head != NULL)
+		{
+			if (LinkedListParent<T>::head == LinkedListParent<T>::tail)
+			{
+				delete LinkedListParent<T>::head;
+				LinkedListParent<T>::head = LinkedListParent<T>::tail = NULL;
+			}
+			else
+			{
+				temp = LinkedListParent<T>::head;
+				LinkedListParent<T>::head = LinkedListParent<T>::head->getNext();
+				delete temp;
+				temp = NULL;
+			}
+			LinkedListParent<T>::num = LinkedListParent<T>::num - 1;
+		}
 	}
 	//получение элемента по индексу - какова асимптотическая оценка этого действия ?
 	virtual Element<T>* operator[](int i)
@@ -269,19 +286,17 @@ public:
 		}
 	}
 
-	Stack<T> filter(bool (*ptr_func)(T))//Фильтруем список. Условие числа кратные 3.
+	virtual void filter(Stack<T>& base, bool (*ptr_func)(T))
 	{
-		Stack<T> result;
-		IteratedLinkedList<T>::iterator = LinkedListParent<T>::head;
+		IteratedLinkedList<T>::iterator = this->LinkedListParent<T>::head;
 		while (IteratedLinkedList<T>::iterator != NULL)
 		{
 			if (ptr_func((*IteratedLinkedList<T>::iterator).getValue()))
 			{
-				result.push((*IteratedLinkedList<T>::iterator).getValue());
+				base.push((*IteratedLinkedList<T>::iterator).getValue());
 			}
 			IteratedLinkedList<T>::iterator++;
 		}
-		return result;
 	}
 };
 
@@ -354,8 +369,9 @@ int main()
 	S.push(8);
 	S.push(33);
 	cout << S;
+
 	Stack<int> Filtered_list;
-	Filtered_list = S.filter(conditions);
+	S.filter(Filtered_list, conditions); //Элементы для фильтрации будут браться из S и записываться в Filtered_list.
 	cout << endl << endl << "Filtered_list" << Filtered_list;
 
 	D<int> A; //Элементы добавятся с сохранением отсортированности.
