@@ -386,8 +386,6 @@ public:
 	IteratedLinkedList() : LinkedListParent<T>() { cout << "\nIteratedLinkedList constructor"; }
 	virtual ~IteratedLinkedList() { cout << "\nIteratedLinkedList destructor"; }
 
-	ListIterator<T> iterator;
-
 	ListIterator<T> begin()
 	{
 		ListIterator<T> it = LinkedListParent<T>::head; return it;
@@ -450,14 +448,14 @@ public:
 
 	virtual void filter(Stack<T>& base, bool (*ptr_func)(T))//Фильтруем список. Условие числа кратные 3.
 	{
-		IteratedLinkedList<T>::iterator = this->LinkedListParent<T>::head;
-		while (IteratedLinkedList<T>::iterator != NULL)
+		ListIterator<T> iterator = this->LinkedListParent<T>::head;
+		while (iterator != NULL)
 		{
-			if (ptr_func((*IteratedLinkedList<T>::iterator).getValue()))
+			if (ptr_func((*iterator).getValue()))
 			{
-				base.push((*IteratedLinkedList<T>::iterator).getValue());
+				base.push((*iterator).getValue());
 			}
-			IteratedLinkedList<T>::iterator++;
+			iterator++;
 		}
 	}
 };
@@ -473,19 +471,19 @@ public:
 	{
 		if (LinkedListParent<T>::num > 0)
 		{
-			IteratedLinkedList<T>::iterator = LinkedListParent<T>::head;
+			ListIterator<T> iterator = LinkedListParent<T>::head;
 			Element<T>* newElem = new Element<T>(value);
-			while (IteratedLinkedList<T>::iterator != NULL && (*IteratedLinkedList<T>::iterator).getValue() > newElem->getValue())
+			while (iterator != NULL && (*iterator).getValue() > newElem->getValue())
 			{
-				IteratedLinkedList<T>::iterator++;
+				iterator++;
 			}
-			if (IteratedLinkedList<T>::iterator == NULL)
+			if (iterator == NULL)
 			{
 				LinkedListParent<T>::tail->setNext(newElem);
 				newElem->setPrevious(LinkedListParent<T>::tail);
 				LinkedListParent<T>::tail = LinkedListParent<T>::tail->getNext();
 			}
-			else if (IteratedLinkedList<T>::iterator == LinkedListParent<T>::head)
+			else if (iterator == LinkedListParent<T>::head)
 			{
 				LinkedListParent<T>::head->setPrevious(newElem);
 				newElem->setNext(LinkedListParent<T>::head);
@@ -493,9 +491,9 @@ public:
 			}
 			else
 			{
-				Element<T>* temp = (*IteratedLinkedList<T>::iterator).getPrevious();
+				Element<T>* temp = (*iterator).getPrevious();
 				newElem->setNext(temp->getNext());
-				(*IteratedLinkedList<T>::iterator).setPrevious(newElem);
+				(*iterator).setPrevious(newElem);
 				newElem->setPrevious(temp);
 				temp->setNext(newElem);
 			}
