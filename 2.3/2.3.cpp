@@ -143,6 +143,75 @@ public:
 			return false;
 		}
 	}
+	bool operator == (const school& other)
+	{
+		if (this->surname == other.surname && this->name == other.name)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	bool operator <= (const school& other)
+	{
+		if (this->surname == other.surname && this->name == other.name)
+		{
+			return true;
+		}
+		else
+		{
+			if (this->surname < other.surname)
+			{
+				return true;
+			}
+			else if (this->surname == other.surname)
+			{
+				if (this->name < other.name)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
+	bool operator >= (const school& other)
+	{
+		if (this->surname == other.surname && this->name == other.name)
+		{
+			return true;
+		}
+		else
+		{
+			if (this->surname > other.surname)
+			{
+				return true;
+			}
+			else if (this->surname == other.surname)
+			{
+				if (this->name > other.name)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
 
 	friend ostream& operator<< (ostream& ustream, school& obj);	//Вывод информации.
 };
@@ -219,12 +288,16 @@ public:
 template<class T>
 ostream& operator<< (ostream& stream, Node<T>& N)
 {
-	stream << "\nNode data: " << N.getData() << ", height: " << N.getHeight();
+	stream << "\nNode data: " << N.data << ", height: " << N.height;
 	return stream;
 }
 
 template<class T>
-void print(Node<T>* N) { cout << "\n" << N->getData(); }
+void print(Node<T>* N)
+{
+	T value = N->getData();
+	cout << "\n" << value;
+}
 
 template<class T>
 class Tree
@@ -607,7 +680,7 @@ public:
 	}
 
 	//поиск узла в дереве. Первый параметр - что искать, второй - в каком поддереве искать
-	virtual Node<T>* Find(int data, Node<T>* Current)
+	virtual Node<T>* Find(T data, Node<T>* Current)
 	{
 		//база рекурсии
 		if (Current == NULL) return NULL;
@@ -709,14 +782,17 @@ public:
 		{
 			root_tree = root_tree->getParent();
 		}
-		Tree<ValueType> T(root_tree);
 
 		if (ptr->getRight() != NULL)
 		{
-			ptr = T.Min(ptr->getRight());
+			ptr = ptr->getRight();
+			while (ptr->getLeft() != NULL)
+			{
+				ptr = ptr->getLeft();
+			}
 			return *this;
 		}
-		if (ptr == T.getRoot())//корень без правого поддерева - это максимум.
+		if (ptr == root_tree && ptr->getRight() == NULL)//корень без правого поддерева - это максимум.
 		{
 			return *this;
 		}
@@ -739,14 +815,17 @@ public:
 		{
 			root_tree = root_tree->getParent();
 		}
-		Tree<ValueType> T(root_tree);
 
 		if (ptr->getRight() != NULL)
 		{
-			ptr = T.Min(ptr->getRight());
+			ptr = ptr->getRight();
+			while (ptr->getLeft() != NULL)
+			{
+				ptr = ptr->getLeft();
+			}
 			return *this;
 		}
-		if (ptr == T.getRoot())//корень без правого поддерева - это максимум.
+		if (ptr == root_tree && ptr->getRight() == NULL)//корень без правого поддерева - это максимум.
 		{
 			return *this;
 		}
@@ -770,14 +849,17 @@ public:
 		{
 			root_tree = root_tree->getParent();
 		}
-		Tree<ValueType> T(root_tree);
 
 		if (ptr->getLeft() != NULL)
 		{
-			ptr = T.Max(ptr->getLeft());
+			ptr = ptr->getLeft();
+			while (ptr->getRight() != NULL)
+			{
+				ptr = ptr->getRight();
+			}
 			return *this;
 		}
-		if (ptr == T.getRoot())//корень без правого поддерева - это максимум.
+		if (ptr == root_tree && ptr->getLeft() == NULL)//корень без левого поддерева - это минимум.
 		{
 			return *this;
 		}
@@ -800,14 +882,17 @@ public:
 		{
 			root_tree = root_tree->getParent();
 		}
-		Tree<ValueType> T(root_tree);
 
 		if (ptr->getLeft() != NULL)
 		{
-			ptr = T.Max(ptr->getLeft());
+			ptr = ptr->getLeft();
+			while (ptr->getRight() != NULL)
+			{
+				ptr = ptr->getRight();
+			}
 			return *this;
 		}
-		if (ptr == T.getRoot())//корень без правого поддерева - это максимум.
+		if (ptr == root_tree && ptr->getLeft() == NULL)//корень без левого поддерева - это минимум.
 		{
 			return *this;
 		}
@@ -849,10 +934,16 @@ template<class T>
 class AVL_Tree : public IteratedTree<T>
 {
 protected:
-	// Balance factorы – это разность высот правого и левого поддеревьев, принимающая одно значение из множества {-1, 0, 1}.
+	//определение разности высот двух поддеревьев
 	int bfactor(Node<T>* p)
 	{
-
+		int hl = 0;
+		int hr = 0;
+		if (p->getLeft() != NULL)
+			hl = p->getLeft()->getHeight();
+		if (p->getRight() != NULL)
+			hr = p->getRight()->getHeight();
+		return (hr - hl);
 	}
 
 	//при добавлении узлов в них нет информации о балансе, т.к. не ясно, куда в дереве они попадут
@@ -860,70 +951,94 @@ protected:
 	//значение могло поменяться
 	void fixHeight(Node<T>* p)
 	{
-
+		int hl = 0;
+		int hr = 0;
+		if (p->getLeft() != NULL)
+			hl = p->getLeft()->getHeight();
+		if (p->getRight() != NULL)
+			hr = p->getRight()->getHeight();
+		p->setHeight((hl > hr ? hl : hr) + 1);
 	}
 
 	//краеугольные камни АВЛ-деревьев - процедуры поворотов
-	Node<T>* RotateRight(Node<T>* p) // правый поворот вокруг p
+	Node<T>* RotateRight(Node<T>* p) //правый поворот вокруг p
 	{
 		Node<T>* q = p->getLeft();
-		if (p->getParent() != NULL)//часть if-про родителя
+		if (p->getParent() != NULL)
 		{
-			if (p->getParent()->getLeft() == p)//можно через операцию меньше больше, но мы напишем через указатели.
-			{
+			if (p->getParent()->getLeft() == p)
 				p->getParent()->setLeft(q);
-			}
 			else
-			{
 				p->getParent()->setRight(q);
-			}
 		}
 		q->setParent(p->getParent());
 		p->setParent(q);
+		if (q->getRight() != NULL) q->getRight()->setParent(p);
+
+		if (p == Tree<T>::root) Tree<T>::root = q;
+
 		p->setLeft(q->getRight());
 		q->setRight(p);
-		if (p == Tree<T>::root)
-		{
-			Tree<T>::root = q;
-		}
-		// еще три команды
+
+		fixHeight(p);
+		fixHeight(q);
+		return q;
 	}
 
-	Node<T>* RotateLeft(Node<T>* q) // левый поворот вокруг q
+	Node<T>* RotateLeft(Node<T>* q) //левый поворот вокруг q
 	{
 		Node<T>* p = q->getRight();
-		if (q->getParent() != NULL)//часть if-про родителя 
+		if (q->getParent() != NULL)
 		{
 			if (q->getParent()->getLeft() == q)
-			{
 				q->getParent()->setLeft(p);
-			}
 			else
-			{
 				q->getParent()->setRight(p);
-			}
 		}
-		p->setParent(p->getParent());
+		p->setParent(q->getParent());
 		q->setParent(p);
+		if (p->getLeft() != NULL) p->getLeft()->setParent(q);
+
+		if (q == Tree<T>::root) Tree<T>::root = p;
+
 		q->setRight(p->getLeft());
 		p->setLeft(q);
 
-		if (q == Tree<T>::root)
-		{
-			Tree<T>::root = p;
-		}
-		// еще три команды
+		fixHeight(q);
+		fixHeight(p);
+		return p;
 	}
 
 	//балансировка поддерева узла p - вызов нужных поворотов в зависимости от показателя баланса
-	Node<T>* Balance(Node<T>* p) // балансировка узла p
+	Node<T>* Balance(Node<T>* p) //балансировка узла p
 	{
+		fixHeight(p);
+		if (bfactor(p) == 2)
+		{
+			if (bfactor(p->getRight()) < 0)
+			{
+				p->setRight(RotateRight(p->getRight()));
+				p->getRight()->setParent(p);
+			}
+			return RotateLeft(p);
+		}
+		if (bfactor(p) == -2)
+		{
+			if (bfactor(p->getLeft()) > 0)
+			{
+				p->setLeft(RotateLeft(p->getLeft()));
+				p->getLeft()->setParent(p);
+			}
+			return RotateRight(p);
+		}
 
+		return p; //балансировка не нужна
 	}
 
 public:
 	//конструктор AVL_Tree вызывает конструктор базового класса Tree
-	AVL_Tree<T>() : IteratedTree<T>() {}
+	AVL_Tree<T>() : IteratedTree<T>() {}//AVL_Tree constructor
+	~AVL_Tree<T>() {}//AVL_Tree destructor
 
 	virtual Node<T>* Add_R(Node<T>* N)
 	{
@@ -950,7 +1065,8 @@ public:
 	//удаление узла
 	virtual void Remove(Node<T>* N)
 	{
-
+		Tree<T>::Remove(N);
+		Balance(Tree<T>::root);
 	}
 };
 
@@ -969,7 +1085,60 @@ int main()
 	school A9("Ковалев", "Даниил", true, 10, "2005.07.07", "Москва");
 	school A10("Макаров", "Тигран", true, 11, "2004.11.11", "Москва");
 
-	//Создание АВЛ-дерева с объектами класса.
+	AVL_Tree<school> T;
 
+	T.Add(A1);
+	T.Add(A2);
+	T.Add(A3);
+	T.Add(A4);
+	T.Add(A5);
+	T.Add(A6);
+	T.Add(A7);
+	T.Add(A8);
+	T.Add(A9);
+	T.Add(A10);
+
+	Node<school>* M = T.Min();
+
+	school A11 = M->getData();
+
+	cout << "\nMin = " << A11 << "\nFind " << A3 << ": " << T.Find(A3, T.getRoot());
+
+	void (*f_ptr)(Node<school>*); f_ptr = print;
+	cout << "\n-----\nInorder:";
+	T.InOrder(T.getRoot(), f_ptr);
+
+	cout << endl << "/////////////////////////////////////////////////////////" << endl;
+	cout << "Test iterator++" << endl;
+	TreeIterator<school> iter = T.begin();
+	while (iter != T.end())
+	{
+		cout << *iter << " ";
+		iter++;
+	}
+	iter++;
+	cout << *iter << " ";
+	cout << endl << "/////////////////////////////////////////////////////////" << endl;
+	cout << "Test iterator--" << endl;
+	while (iter != T.begin())
+	{
+		cout << *iter << " ";
+		iter--;
+	}
+	iter--;
+	cout << *iter << " ";
+
+	cout << endl << "/////////////////////////////////////////////////////////" << endl;
+	cout << "\n-----\nPreorder:";
+	T.PreOrder(T.getRoot(), f_ptr);
+
+	cout << "\n-----\nInorder:";
+	T.InOrder(T.getRoot(), f_ptr);
+
+	cout << "\n-----\nPostorder:";
+	T.PostOrder(T.getRoot(), f_ptr);
+
+	cout << endl;
+	char c; cin >> c;
 	return 0;
 }
