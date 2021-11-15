@@ -8,19 +8,182 @@
 функцию удаления корня дерева ExtractMax(). Выведите элементы Heap в
 порядке убывания приоритета с её помощью.
 
-Таблица 1.2 Вариант 18.
+Вариант 18.
 
 Класс С
 «Школьник».
 Минимальный набор полей: фамилия, имя, пол, класс, дата рождения, адрес.
 
 Приоритет
-Класс; дата рождения (по возрастанию); фамилия и имя (по возрастанию).
+Класс; дата рождения; фамилия и имя.
 */
 
 #include <iostream>
 
 using namespace std;
+
+class school
+{
+private:
+	string surname;//Фамилия.
+	string name;//Имя.
+	bool floor;//Пол (0-женский, 1-мужской).
+	int classroom;//Класс.
+	string data;//Жата рождения (год, месяц, день).
+	string address;//Адрес(Город).
+public:
+	school()
+	{
+		surname = "Фамилия?";
+		name = "Имя?";
+		floor = false;
+		classroom = 0;
+		data = "дата рождения?";
+		address = "адрес?";
+	}
+	school(string Xsurname, string Xname, bool Xfloor, int Xclassroom, string Xdata, string Xaddress) //Конструктор.
+	{
+		surname = Xsurname;
+		name = Xname;
+		floor = Xfloor;
+		classroom = Xclassroom;
+		data = Xdata;
+		address = Xaddress;
+	}
+	//Сеттеры.
+	void setsurname(string a) //Запись фамилии.
+	{
+		surname = a;
+	}
+	void setname(string a) //Запись имени.
+	{
+		name = a;
+	}
+	void setfloor(bool a) //Запись пола.
+	{
+		floor = a;
+	}
+	void setclassroom(int a) //Запись класса.
+	{
+		classroom = a;
+	}
+	void setdata(string a) //Запись даты.
+	{
+		data = a;
+	}
+	void setaddress(string a) //Запись адреса.
+	{
+		address = a;
+	}
+	//Геттеры.
+	string getsurname() //Выдать фамилию.
+	{
+		return surname;
+	}
+	string getname() //Выдать имя.
+	{
+		return name;
+	}
+	bool getfloor() //Выдать пол.
+	{
+		return floor;
+	}
+	int getclassroom() //Выдать класс.
+	{
+		return classroom;
+	}
+	string getdata() //Выдать дату.
+	{
+		return data;
+	}
+	string getaddress() //Выдать адрес.
+	{
+		return address;
+	}
+	//Приоритет: Класс; дата рождения; фамилия и имя.
+	bool operator > (const school& other)
+	{
+		if (this->classroom > other.classroom)
+		{
+			return true;
+		}
+		else if (this->classroom == other.classroom)
+		{
+			if (this->data < other.data) //2003 год > 2004 года, т.к. первому будет 18, а второму - 17 (18 > 17).
+			{
+				return true;
+			}
+			else if (this->data == other.data)
+			{
+				if (this->surname > other.surname)
+				{
+					return true;
+				}
+				else if (this->name > other.name)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	bool operator < (const school& other)
+	{
+		if (this->classroom < other.classroom)
+		{
+			return true;
+		}
+		else if (this->classroom == other.classroom)
+		{
+			if (this->data > other.data) //2003 год > 2004 года, т.к. первому будет 18, а второму - 17 (18 > 17).
+			{
+				return true;
+			}
+			else if (this->data == other.data)
+			{
+				if (this->surname < other.surname)
+				{
+					return true;
+				}
+				else if (this->name < other.name)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	bool operator == (const school& other)
+	{
+		if (this->classroom == other.classroom && this->data == other.data && this->surname == other.surname && this->name == other.name)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	friend ostream& operator<< (ostream& ustream, school& obj);	//Вывод информации.
+};
+
+ostream& operator<< (ostream& ustream, school& obj)
+{
+	{
+		char Xfloor;
+		if (obj.getfloor() == false)
+		{
+			Xfloor = 'Ж';
+		}
+		else
+		{
+			Xfloor = 'М';
+		}
+		ustream << "Школьник:\t" << obj.getsurname() << " " << obj.getname() << ". Пол:\t" << Xfloor << ". Класс:\t" << obj.getclassroom() << ". Дата рождения (год.месяц.цисло):\t" << obj.getdata() << " Адрес:\t" << obj.getaddress();
+		return ustream;
+	}
+}
 
 //узел дерева
 template <class T>
@@ -29,29 +192,109 @@ class Node
 private:
 	T value;
 public:
+	Node<T>() {}
+	Node<T>(T n)
+	{
+		value = n;
+	}
 	//установить данные в узле
 	T getValue() { return value; }
 	void setValue(T v) { value = v; }
-	//сравнение узлов
-	int operator<(Node N)
+
+	//cравнение узлов
+	bool operator<(Node N)
 	{
-		return (value < N.getValue());
+		if (value < N.getValue())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
-	int operator>(Node N)
+	bool operator>(Node N)
 	{
-		return (value > N.getValue());
+		if (value > N.getValue())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	bool operator>=(Node N)
+	{
+		if (value >= N.getValue())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	bool operator<=(Node N)
+	{
+		if (value <= N.getValue())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	bool operator==(Node N)
+	{
+		if (value == N.getValue())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	bool operator!=(Node N)
+	{
+		if (value != N.getValue())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	T operator*()
+	{
+		return value;
 	}
 	//вывод содержимого одного узла
 	void print()
 	{
 		cout << value;
 	}
+
+	template<class T> friend ostream& operator<< (ostream& ustream, Node<T>& obj);	//Вывод информации.
 };
+
+template<class T>
+ostream& operator<< (ostream& ustream, Node<T>& obj)
+{
+	{
+		ustream << obj.value;
+		return ustream;
+	}
+}
 
 template <class T>
 void print(Node<T>* N)
 {
-	cout << N->getValue() << "\n";
+	T temporary = N->getValue();
+	cout << temporary << "\n";
 }
 
 //куча (heap)
@@ -210,7 +453,39 @@ public:
 };
 int main()
 {
-	Heap<int> Tree;
+	setlocale(LC_ALL, "Russian");
+	//Все совпадения с реальными людьми случайны.
+	school A1("Гусев", "Никита", true, 11, "2004.10.10", "Москва");
+	school A2("Любимова", "Милана", false, 10, "2005.09.11", "Краснодар");
+	school A3("Фролов", "Роман", true, 5, "2010.01.05", "Волгоград");
+	school A4("Журавлев", "Роман", true, 1, "2014.09.11", "Москва");
+	school A5("Иванова", "Алиса", false, 4, "2011.12.11", "Дубна");
+	school A6("Иванова", "Галя", false, 4, "2011.12.11", "Дубна");
+	school A7("Степанов", "Степан", true, 7, "2008.11.15", "Москва");
+	school A8("Власов", "Матвей", true, 7, "2008.11.17", "Мытищи");
+	school A9("Ковалев", "Даниил", true, 10, "2005.07.07", "Москва");
+	school A10("Макаров", "Тигран", true, 11, "2003.11.11", "Москва");
+	if (A1 < A10)
+	{
+		cout << A1 << endl;
+	}
+	else
+	{
+		cout << A10 << endl;
+	}
+
+
+	Node<school> G = A1;
+	cout << G << endl;
+	cout << endl << endl << endl;
+	G.print();
+	cout << endl << endl << endl;
+	print(&G);
+
+	school A99 = *G;
+	cout << A99;
+
+	/*Heap<int> Tree;
 	Tree.Add(1);
 	Tree.Add(-1);
 	Tree.Add(-2);
@@ -224,6 +499,8 @@ int main()
 	cout << "\n-----\nStraight:";
 	void(*f_ptr)(Node<int>*); f_ptr = print;
 	Tree.Straight(f_ptr);
-	char c; cin >> c;
+	char c; cin >> c;*/
+
+
 	return 0;
 }
