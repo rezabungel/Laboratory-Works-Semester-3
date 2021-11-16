@@ -309,92 +309,212 @@ private:
 	//сколько памяти выделено
 	int size;
 public:
-	//доступ к вспомогательным полям кучи и оператор индекса
-	int getCapacity() { return size; }
-	int getCount() { return len; }
-	Node<T>& operator[](int index)
-	{
-		if (index < 0 || index >= len)
-			;//?
-
-		return arr[index];
-	}
-	//конструктор
-	Heap<T>(int MemorySize = 100)
+	Heap<T>(int MemorySize = 100)//конструктор
 	{
 		arr = new Node<T>[MemorySize];
 		len = 0;
 		size = MemorySize;
 	}
+	~Heap<T>()//деструктор
+	{
+		delete[] arr;
+	}
+
+	//доступ к вспомогательным полям кучи и оператор индекса
+	int getCapacity() { return size; }
+	int getCount() { return len; }
+
+	//Если len=10, то максимальный индекс 10-1=9.
+	Node<T>& operator[](int index)
+	{
+		while (!(index >= 0 && index < len))
+		{
+			cout << endl << "////////////////////////////////////////////////////////////////////////////////" << endl;
+			cout << "Некорректный индекс: " << index << endl;
+			cout << "Введите index ещё раз (диапазон индексов [0:" << len - 1 << "]). index="; cin >> index;
+			cout << "////////////////////////////////////////////////////////////////////////////////" << endl;
+		}
+		return arr[index];
+	}
+
 	//поменять местами элементы arr[index1], arr[index2]
 	void Swap(int index1, int index2)
 	{
-		if (index1 <= 0 || index1 >= len)
-			;
-		if (index2 <= 0 || index2 >= len)
-			;
-		//здесь нужна защита от дурака
+		while (!(index1 >= 0 && index1 < len))
+		{
+			cout << endl << "////////////////////////////////////////////////////////////////////////////////" << endl;
+			cout << "Некорректный индекс: " << index1 << endl;
+			cout << "Введите index1 ещё раз (диапазон индексов [0:" << len - 1 << "]). index1="; cin >> index1;
+			cout << "////////////////////////////////////////////////////////////////////////////////" << endl;
+		}
+		while (!(index2 >= 0 && index2 < len))
+		{
+			cout << endl << "////////////////////////////////////////////////////////////////////////////////" << endl;
+			cout << "Некорректный индекс: " << index2 << endl;
+			cout << "Введите index1 ещё раз (диапазон индексов [0:" << len - 1 << "]). index2="; cin >> index2;
+			cout << "////////////////////////////////////////////////////////////////////////////////" << endl;
+		}
 		Node<T> temp;
 		temp = arr[index1];
 		arr[index1] = arr[index2];
 		arr[index2] = temp;
 	}
+
 	//скопировать данные между двумя узлами
-	void Copy(Node<T>* dest, Node<T>* source)
+	void Copy(Node<T>* dest, Node<T>* source) //(copy - работает с указателями, поэтому, чтобы передать обычный объект нужно использовать ссылки)
 	{
 		dest->setValue(source->getValue());
 	}
+
 	//функции получения левого, правого дочернего элемента, родителя или их индексов в массиве
 	Node<T>* GetLeftChild(int index)
 	{
-		if (index < 0 || index * 2 >= len)
-			;
-		//здесь нужна защита от дурака
-		return &arr[index * 2 + 1];
+		if (index >= 0 && index * 2 + 1 < len)
+		{
+			return &arr[index * 2 + 1];
+		}
+		else
+		{
+			cout << endl << "////////////////////////////////////////////////////////////////////////////////" << endl;
+			cout << "Авария. GetLeftChild. Некорректный индекс (выход из допустимого диапазона индексов). ";
+			cout << endl << "////////////////////////////////////////////////////////////////////////////////" << endl;
+			exit(1); //Аварийное завершение.
+		}
 	}
 	Node<T>* GetRightChild(int index)
 	{
-		if (index < 0 || index * 2 >= len)
-			;
-		//здесь нужна защита от дурака
-		return &arr[index * 2 + 2];
+		if (index >= 0 && index * 2 + 2 < len)
+		{
+			return &arr[index * 2 + 2];
+		}
+		else
+		{
+			cout << endl << "////////////////////////////////////////////////////////////////////////////////" << endl;
+			cout << "Авария. GetRightChild. Некорректный индекс (выход из допустимого диапазона индексов). ";
+			cout << endl << "////////////////////////////////////////////////////////////////////////////////" << endl;
+			exit(1);//Аварийное завершение.
+		}
 	}
 	Node<T>* GetParent(int index)
 	{
-		if (index <= 0 || index >= len)
-			;
-		//здесь нужна защита от дурака
-		if (index % 2 == 0)
-			return &arr[index / 2 - 1];
-		return &arr[index / 2];
+		if (index == 0)
+		{
+			cout << endl << "////////////////////////////////////////////////////////////////////////////////" << endl;
+			cout << "У корня нет родителя. Будет выдан корень.";
+			cout << endl << "////////////////////////////////////////////////////////////////////////////////" << endl;
+			return 0;
+		}
+		if (index >= 0 && index < len)
+		{
+			if (index % 2 == 0)
+			{
+				return &arr[index / 2 - 1];
+			}
+			return &arr[index / 2];
+		}
+		else
+		{
+			cout << endl << "////////////////////////////////////////////////////////////////////////////////" << endl;
+			cout << "Авария. GetParent. Некорректный индекс (выход из допустимого диапазона индексов). ";
+			cout << endl << "////////////////////////////////////////////////////////////////////////////////" << endl;
+			exit(1);//Аварийное завершение.
+		}
 	}
 	int GetLeftChildIndex(int index)
 	{
-		if (index < 0 || index * 2 >= len)
-			;
-		//здесь нужна защита от дурака
-		return index * 2 + 1;
+		if (index >= 0 && index * 2 + 1 < len)
+		{
+			return index * 2 + 1;
+		}
+		else
+		{
+			cout << endl << "////////////////////////////////////////////////////////////////////////////////" << endl;
+			cout << "Авария. GetLeftChildIndex. Некорректный индекс (выход из допустимого диапазона индексов). ";
+			cout << endl << "////////////////////////////////////////////////////////////////////////////////" << endl;
+			exit(1); //Аварийное завершение.
+		}
 	}
 	int GetRightChildIndex(int index)
 	{
-		if (index < 0 || index * 2 >= len)
-			;
-		//здесь нужна защита от дурака
-		return index * 2 + 2;
+		if (index >= 0 && index * 2 + 2 <= len) ////
+		{
+			return index * 2 + 2;
+		}
+		else
+		{
+			cout << endl << "////////////////////////////////////////////////////////////////////////////////" << endl;
+			cout << "Авария. GetRightChildIndex. Некорректный индекс (выход из допустимого диапазона индексов). ";
+			cout << endl << "////////////////////////////////////////////////////////////////////////////////" << endl;
+			exit(1);//Аварийное завершение.
+		}
 	}
 	int GetParentIndex(int index)
 	{
-		if (index <= 0 || index >= len)
-			;
-		//здесь нужна защита от дурака
-		if (index % 2 == 0)
-			return index / 2 - 1;
-		return index / 2;
+		if (index >= 0 && index < len)
+		{
+			if (index == 0)
+			{
+				return 0;
+			}
+			if (index % 2 == 0)
+			{
+				return index / 2 - 1;
+			}
+			else
+			{
+				return index / 2;
+			}
+		}
+		else
+		{
+			cout << endl << "////////////////////////////////////////////////////////////////////////////////" << endl;
+			cout << "Авария. GetParentIndex. Некорректный индекс (выход из допустимого диапазона индексов). ";
+			cout << endl << "////////////////////////////////////////////////////////////////////////////////" << endl;
+			exit(1);//Аварийное завершение.
+		}
 	}
+
+	void Heapify(int index = 0) //То же, что и SiftDown
+	{
+		int leftChild;
+		int rightChild;
+		int largestChild;
+
+		leftChild = 2 * index + 1;
+		rightChild = 2 * index + 2;
+
+		//нужно сравнить элементы и при необходимости произвести просеивание вниз
+		if (rightChild < len)
+		{//если есть правый элемент, то есть и левый элемент
+			if (arr[leftChild] > arr[rightChild])
+			{
+				largestChild = leftChild;//случай, когла левый элемент больше правого
+			}
+			else
+			{
+				largestChild = rightChild;//случай, когла правый элемент больше левого
+			}
+			if (arr[index] < arr[largestChild])
+			{
+				Swap(index, largestChild);
+				Heapify(largestChild); //рекурсия
+			}
+		}
+		else//есть только левый элемент (правого элемента нет)
+		{
+			if (leftChild < len && arr[index] < arr[leftChild])
+			{
+				Swap(index, leftChild);
+				Heapify(leftChild);//рекурсия
+			}
+		}
+	}
+
 	//просеить элемент вверх
 	void SiftUp(int index = -1)
 	{
 		if (index == -1) index = len - 1;
+		if (index <= 0) return; //меньше 0 - мы нигде, надо выхидить. 0 корень- его не с кем менять, тоже выходим
 		int parent = GetParentIndex(index);
 		int index2 = GetLeftChildIndex(parent);
 		if (index2 == index) index2 = GetRightChildIndex(parent);
@@ -413,6 +533,20 @@ public:
 			SiftUp(parent);
 		}
 	}
+
+	Node<T>* ExtractMax()
+	{//исключить максимум и запустить просеивание кучи
+		if (len == 0) return NULL; //Если длина равна 0, то ничего не нужно делать
+		Node<T>* res = new Node<T>;
+		Copy(res, &arr[0]); //copy - работает с указателями, поэтому, чтобы передать обычный объект нужно использовать ссылки
+
+		Swap(0, len - 1); //Copy(&arr[0], &arr[len - 1]);
+		len--;
+		Heapify();//по-умолчанию начинает с нулевого элемента
+
+		return res;
+	}
+
 	//добавление элемента - вставляем его в конец массива и просеиваем вверх
 	template <class T>
 	void Add(T v)
@@ -431,6 +565,7 @@ public:
 			SiftUp();
 		}
 	}
+
 	//перечислить элементы кучи и применить к ним функцию
 	void Straight(void(*f)(Node<T>*))
 	{
@@ -440,7 +575,18 @@ public:
 			f(&arr[i]);
 		}
 	}
+
 	//перебор элементов, аналогичный проходам бинарного дерева
+	void PreOrder(void(*f)(Node<T>*), int index = 0)
+	{
+		if (index >= 0 && index < len)
+			f(&arr[index]);
+		if (GetLeftChildIndex(index) < len)
+			PreOrder(f, GetLeftChildIndex(index));
+		if (GetRightChildIndex(index) < len)
+			PreOrder(f, GetRightChildIndex(index));
+	}
+
 	void InOrder(void(*f)(Node<T>*), int index = 0)
 	{
 		if (GetLeftChildIndex(index) < len)
@@ -450,7 +596,20 @@ public:
 		if (GetRightChildIndex(index) < len)
 			PreOrder(f, GetRightChildIndex(index));
 	}
+
+	void PostOrder(void(*f)(Node<T>*), int index = 0)
+	{
+		if (GetLeftChildIndex(index) < len)
+			PreOrder(f, GetLeftChildIndex(index));
+		if (GetRightChildIndex(index) < len)
+			PreOrder(f, GetRightChildIndex(index));
+		if (index >= 0 && index < len)
+			f(&arr[index]);
+	}
 };
+
+
+
 int main()
 {
 	setlocale(LC_ALL, "Russian");
@@ -465,42 +624,32 @@ int main()
 	school A8("Власов", "Матвей", true, 7, "2008.11.17", "Мытищи");
 	school A9("Ковалев", "Даниил", true, 10, "2005.07.07", "Москва");
 	school A10("Макаров", "Тигран", true, 11, "2003.11.11", "Москва");
-	if (A1 < A10)
-	{
-		cout << A1 << endl;
-	}
-	else
-	{
-		cout << A10 << endl;
-	}
 
-
-	Node<school> G = A1;
-	cout << G << endl;
-	cout << endl << endl << endl;
-	G.print();
-	cout << endl << endl << endl;
-	print(&G);
-
-	school A99 = *G;
-	cout << A99;
-
-	/*Heap<int> Tree;
-	Tree.Add(1);
-	Tree.Add(-1);
-	Tree.Add(-2);
-	Tree.Add(2);
-	Tree.Add(5);
-	Tree.Add(6);
-	Tree.Add(-3);
-	Tree.Add(-4);
-	Tree.Add(4);
-	Tree.Add(3);
-	cout << "\n-----\nStraight:";
-	void(*f_ptr)(Node<int>*); f_ptr = print;
+	Heap<school> Tree;
+	Tree.Add(A1);
+	Tree.Add(A2);
+	Tree.Add(A3);
+	Tree.Add(A4);
+	Tree.Add(A5);
+	Tree.Add(A6);
+	Tree.Add(A7);
+	Tree.Add(A8);
+	Tree.Add(A9);
+	Tree.Add(A10);
+	cout << "\n-----\nStraight:\n";
+	void(*f_ptr)(Node<school>*); f_ptr = print;
 	Tree.Straight(f_ptr);
-	char c; cin >> c;*/
 
-
+	cout << endl << "////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////" << endl;
+	cout << "---Ввывод в остортированном виде heapsort. (Элементы будут удалены из heap, т.к. используется 'ExtractMax()')---" << endl;
+	int i = 0;
+	while (i < Tree.getCount()) //теперь это heapsort
+	{
+		Node<school>* N = Tree.ExtractMax();
+		N->print();
+		delete N;
+		cout << endl;
+	}
+	cout << "////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////" << endl;
 	return 0;
 }
