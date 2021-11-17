@@ -768,6 +768,12 @@ public:
 	bool operator!=(TreeIterator const& other) { return ptr != other.ptr; }
 	bool operator==(TreeIterator const& other) { return ptr == other.ptr; }
 
+	//Получить Node.
+	Node<ValueType>* getNode()
+	{
+		return ptr;
+	}
+
 	//Получить значение.
 	Node<ValueType>& operator*()
 	{
@@ -1065,8 +1071,37 @@ public:
 	//удаление узла
 	virtual void Remove(Node<T>* N)
 	{
-		Tree<T>::Remove(N);
-		Balance(Tree<T>::root);
+		if (N->getParent() == NULL)
+		{//Удаляемый элемент - корень
+			Tree<T>::Remove(N);
+			Balance(Tree<T>::root);
+		}
+		else
+		{//Балансировка идет снизу вверх
+			Node<T>* temporary = N->getParent();
+			Tree<T>::Remove(N);
+
+			//Пересчитываем высоты в поддереве, где происходило удаление
+			TreeIterator<T> iter_the_subtree;
+			Node<T>* min = Tree<T>::Min(temporary);
+			Node<T>* max = Tree<T>::Max(temporary);
+			for (iter_the_subtree = min; iter_the_subtree != max; iter_the_subtree++)
+			{
+				fixHeight(iter_the_subtree.getNode());
+			}
+			iter_the_subtree++;
+			fixHeight(iter_the_subtree.getNode());
+
+			if (temporary->getParent() == NULL)
+			{//Родитель удаляемого элемента - корень
+				Balance(Tree<T>::root);
+			}
+			else
+			{
+				Balance(temporary);
+				Balance(temporary->getParent()); //Балансировка для родителя удаляемого элемента
+			}
+		}
 	}
 };
 

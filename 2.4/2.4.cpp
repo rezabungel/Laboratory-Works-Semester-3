@@ -436,7 +436,7 @@ public:
 	}
 	int GetRightChildIndex(int index)
 	{
-		if (index >= 0 && index * 2 + 2 <= len) ////
+		if (index >= 0 && index * 2 + 2 <= len) //"<=" приходится брать эту проверку, чтобы программа работала, вместо "<". Мб это можно пофиксить.
 		{
 			return index * 2 + 2;
 		}
