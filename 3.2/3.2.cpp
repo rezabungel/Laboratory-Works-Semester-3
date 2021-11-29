@@ -33,6 +33,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <stack>
 #include <algorithm>
 
 using namespace std;
@@ -242,11 +243,45 @@ vector<int> BFS(vector<vector<int>>& mat, int start)
 	return dist;
 }
 
+//DFS - Depth-First Search (поиск в глубину или обход в глубину) - один из основных методов обхода графа, часто используемый для проверки связности, поиска цикла и компонент сильной связности и для топологической сортировки.
+//(В данной реализации возвращает порядковые номера вершин, через сколько итераций мы попадем в них, начиная со стартовой вершины)
+vector<int> DFS(vector<vector<int>>& mat, int start) //Обход в глубину, для случая, когда мы передаем матрицу смежности.
+{
+	vector<int> used(mat.size(), 0);//Вектор, хранящий информацию о взятых вершинах
 
+	vector<int> dist(mat.size(), -1);//Хранит количество шагов, сколько мы сделали от стартовой вершины до всех остальных
+	dist[start] = 0;//Расстояние из стартовой вершины до старта = 0
 
-//DFS - Depth-First Search (поиск в глубину или обход в глубину)
+	stack<int> graph_node;//Список активных вершин
+	graph_node.push(start);
 
+	int step = 0;
 
+	while (!graph_node.empty())
+	{
+		int vertex = graph_node.top();
+		graph_node.pop();
+
+		for (int i = mat.size() - 1; i >= 0; i--) //Т.к. мы работаем в стэке - запускаем цикл в обратную сторону, чтобы вершины обходились в порядке возрастания (0..1..2..).
+		{
+			if (mat[vertex][i] != 0 && used[i] == 0) //Первое условие - между узлами есть связь; второе - узел, в который мы придем еще не рассматривался
+			{
+				graph_node.push(i);
+			}
+		}
+
+		if (dist[vertex] < 0)
+		{
+			dist[vertex] = step;
+		}
+		used[vertex] = 1;//Закончили обработку вершины
+		step++;
+	}
+
+	return dist;
+}
+
+//Обход в глубину, для случая, когда мы передаем минимальный остов. ???
 
 int main()
 {
@@ -294,11 +329,15 @@ int main()
 	cout << endl;
 
 	print_matrix(mat);
-	vector<int> dist;
-	dist = BFS(mat, 0);
-	cout << "BFS - обход в ширину (вернёт минимальное кол-во рёбер от стартовой вершины до всех остальных): ";
-	print_vector(dist);
+	vector<int> graph_traversal;
 
+	graph_traversal = BFS(mat, 0);
+	cout << "BFS - обход в ширину (вернёт минимальное кол-во рёбер от стартовой вершины до всех остальных): ";
+	print_vector(graph_traversal);
+
+	graph_traversal = DFS(mat, 0);
+	cout << "DFS - обход в глубину (возвращает порядковые номера вершин, через сколько итераций мы попадем в них, начиная со стартовой вершины): ";
+	print_vector(graph_traversal);
 
 	return 0;
 }
