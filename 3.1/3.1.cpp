@@ -147,7 +147,7 @@ void print_min_ostov(vector<Edge>& min_ostov_tree)
 
 vector<Edge> min_ostov(vector<vector<int>>& mat, int start) //start - это вершина, поэтому от 0 до максимальной вершины
 {
-	if (start < 0 && start >mat.size())
+	if (start < 0 || start >= mat.size())
 	{
 		cout << "Неверно указана вершина старта. Вершина старта устанавливается в ноль." << endl;
 		start = 0;
