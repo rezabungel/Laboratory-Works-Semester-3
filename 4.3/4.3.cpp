@@ -26,10 +26,113 @@
 */
 
 #include <iostream>
+#include <vector>
+#include <set>
+#include <queue>
 
 using namespace std;
 
+//Для планарного графа достаточно 4х цветов, если граф не планарный, то может понадобится больше цветов.
+void drawgraph(vector<vector<int> >& matrix, vector <int>& color, int curr = 0)
+{
+	//Структура данных для цветов смежных вершин с исследуемой.
+	set<int> neighbours;//Используем контейнер set, потому что для контейнера set в данной задаче поиск и добавление будут максимально быстрыми.
+
+	//Аналог поиска в ширину.
+	queue<int> q;
+	q.push(curr);
+	while (!q.empty())
+	{
+		curr = q.front();
+		q.pop();
+
+		if (color[curr] != 0) //Вершина уже закрашена?
+		{
+			continue;
+		}
+		neighbours.clear();
+
+		for (int next = 0; next < matrix.size(); next++)
+		{
+			if (matrix[curr][next] >= 1 || !color[next])
+			{
+				//проверяем цвета всех смежных вершин
+				if (color[next])
+				{
+					neighbours.insert(color[next]);
+				}
+				else
+				{
+					q.push(next);
+				}
+			}
+		}
+
+		//Счётчик цветов - ищем допустимый цвет с наименьшим индексом.
+		int color_counter = 1;
+		auto it = neighbours.begin();
+		do
+		{
+			//Есть ли этот номер цвета среди соседей?
+			it = neighbours.find(color_counter);
+			if (it == neighbours.end())
+			{//Цвет не найден - выходим.
+				break;
+			}
+			color_counter++;
+		} while (true);
+
+		//Красим вершину в допустимый цвет.
+		color[curr] = color_counter;
+	}
+}
+
 int main()
 {
-	cout << "Hello World!\n";
+	vector<vector<int> > mat =
+	{
+	{ 0, 1, 0, 0, 0, 1 },
+	{ 1, 0, 1, 0, 0, 0 },
+	{ 0, 1, 0, 1, 1, 0 },
+	{ 0, 0, 1, 0, 1, 0 },
+	{ 0, 0, 1, 1, 0, 1 },
+	{ 1, 0, 0, 0, 1, 0 }
+	};
+	vector<int> color(6, 0);
+	drawgraph(mat, color, 0);
+	cout << "\nColor: ";
+	for (int i = 0; i < 6; i++)
+	{
+		cout << color[i] << " ";
+	}
+
+	cout << endl;
+
+	vector<vector<int> > matrix =
+	{
+		{ 0, 0, 0, 7, 6, 0, 1, 4, 4, 5, 6, 6, 7 },
+		{ 0, 0, 6, 4, 4, 1, 2, 3, 2, 0, 1, 4, 2 },
+		{ 0, 6, 0, 8, 8, 4, 3, 6, 5, 3, 6, 6, 5 },
+		{ 7, 4, 8, 0, 5, 4, 5, 8, 0, 9, 3, 6, 8 },
+		{ 6, 4, 8, 5, 0, 1, 4, 2, 7, 7, 7, 2, 0 },
+		{ 0, 1, 4, 4, 1, 0, 7, 4, 4, 2, 4, 2, 6 },
+		{ 1, 2, 3, 5, 4, 7, 0, 7, 1, 2, 2, 9, 8 },
+		{ 4, 3, 6, 8, 2, 4, 7, 0, 8, 4, 2, 3, 2 },
+		{ 4, 2, 5, 0, 7, 4, 1, 8, 0, 2, 5, 8, 1 },
+		{ 5, 0, 3, 9, 7, 2, 2, 4, 2, 0, 5, 9, 7 },
+		{ 6, 1, 6, 3, 7, 4, 2, 2, 5, 5, 0, 9, 6 },
+		{ 6, 4, 6, 6, 2, 2, 9, 3, 8, 9, 9, 0, 5 },
+		{ 7, 2, 5, 8, 0, 6, 8, 2, 1, 7, 6, 5, 0 }
+	};
+	vector<int> color_1(matrix.size(), 0);
+	drawgraph(matrix, color_1, 0);
+	cout << "\nColor: ";
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		cout << color_1[i] << " ";
+	}
+
+	cout << endl;
+
+	return 0;
 }
