@@ -88,6 +88,20 @@ void drawgraph(vector<vector<int> >& matrix, vector <int>& color, int curr = 0)
 	}
 }
 
+void print_matrix(vector<vector<int>>& mat)
+{
+	cout << "--------------------------------------------Data Matrix--------------------------------------------" << endl;
+	for (int i = 0; i < mat.size(); i++)
+	{
+		for (int j = 0; j < mat[i].size(); j++)
+		{
+			cout << mat[i][j] << "\t";
+		}
+		cout << endl;
+	}
+	cout << "---------------------------------------------------------------------------------------------------" << endl;
+}
+
 int main()
 {
 	vector<vector<int> > mat =
@@ -99,15 +113,16 @@ int main()
 	{ 0, 0, 1, 1, 0, 1 },
 	{ 1, 0, 0, 0, 1, 0 }
 	};
+	print_matrix(mat);
 	vector<int> color(6, 0);
 	drawgraph(mat, color, 0);
-	cout << "\nColor: ";
+	cout << "Color: ";
 	for (int i = 0; i < 6; i++)
 	{
 		cout << color[i] << " ";
 	}
 
-	cout << endl;
+	cout << endl << endl << endl;
 
 	vector<vector<int> > matrix =
 	{
@@ -125,9 +140,10 @@ int main()
 		{ 6, 4, 6, 6, 2, 2, 9, 3, 8, 9, 9, 0, 5 },
 		{ 7, 2, 5, 8, 0, 6, 8, 2, 1, 7, 6, 5, 0 }
 	};
+	print_matrix(matrix);
 	vector<int> color_1(matrix.size(), 0);
 	drawgraph(matrix, color_1, 0);
-	cout << "\nColor: ";
+	cout << "Color: ";
 	for (int i = 0; i < matrix.size(); i++)
 	{
 		cout << color_1[i] << " ";

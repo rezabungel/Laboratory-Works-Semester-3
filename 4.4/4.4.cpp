@@ -26,11 +26,116 @@
 };
 */
 
-#include <iostream>
+#include <iostream> 
+#include <vector>
+#include <stack>
+#include <queue>
 
 using namespace std;
 
+//Гамильтонов путь - все вершины прошли 1 раз, но не вернулись в исходную вершину.
+//Гамильтонов цикл - все вершины прошли 1 раз и вернулись в исходную вершину.
+bool hamilton(vector<vector<int> >& mat, vector <bool>& visited, vector <int>& path, int curr, bool flag = false)
+{
+	//Поиск гамильтонова пути или цикла зависит от флага.
+	//flag = true - гамильтонов путь.
+	//flag = false - гамильтонов цикл.
+
+	path.push_back(curr);
+	//Путь содержит все вершины: если есть связь последней вершины с исходной, цикл найден.
+	//Если нет, откатываемся на шаг назад.
+	if (flag == true)
+	{
+		if (path.size() == mat.size())
+		{
+			return true;//Гамильтонов путь.
+		}
+	}
+	else
+	{
+		if (mat[curr][path[0]] > 0)
+		{
+			return true;//Гамильтонов цикл.
+		}
+	}
+
+	//Вершина использована в пути.
+	visited[curr] = true;
+	//Проверяем всех непосещенных соседей вершины curr.
+
+	//Опрос всех смежных с ней вершин.
+	for (int i = 0; i < mat.size(); i++)
+	{
+		if (mat[curr][i] > 0 && !visited[i])
+		{
+			if (hamilton(mat, visited, path, i, flag)) //Рекурсивный вызов.
+			{
+				return true;
+			}
+		}
+	}
+
+	//Этот путь не подходит, убираем вершину и откатываемся.
+	visited[curr] = false;
+	path.pop_back();
+	return false;
+}
+
+void print_matrix(vector<vector<int>>& mat)
+{
+	cout << "--------------------------------------------Data Matrix--------------------------------------------" << endl;
+	for (int i = 0; i < mat.size(); i++)
+	{
+		for (int j = 0; j < mat[i].size(); j++)
+		{
+			cout << mat[i][j] << "\t";
+		}
+		cout << endl;
+	}
+	cout << "---------------------------------------------------------------------------------------------------" << endl;
+}
+
 int main()
 {
-    cout << "Hello World!\n";
+	//отрежим 5ую вершину для проверки того, что нет
+	vector<vector<int> > mat =
+	{
+		{ 0, 1, 0, 0, 0, 0 },
+		{ 1, 0, 1, 0, 0, 0 },
+		{ 0, 1, 0, 1, 1, 0 },
+		{ 0, 0, 1, 0, 1, 0 },
+		{ 0, 0, 1, 1, 0, 1 },
+		{ 0, 0, 0, 0, 1, 0 }
+	};
+	vector<bool> visited_mat(6, 0);
+	vector<int> path_mat;
+	print_matrix(mat);
+	cout << "Hamilton way: " << hamilton(mat, visited_mat, path_mat, 0, true) << endl;
+	cout << "Hamilton cycle: " << hamilton(mat, visited_mat, path_mat, 0, false) << endl;
+
+	cout << endl << endl << endl;
+
+	vector<vector<int> > matrix =
+	{
+		{ 0, 0, 0, 7, 6, 0, 1, 4, 4, 5, 6, 6, 7 },
+		{ 0, 0, 6, 4, 4, 1, 2, 3, 2, 0, 1, 4, 2 },
+		{ 0, 6, 0, 8, 8, 4, 3, 6, 5, 3, 6, 6, 5 },
+		{ 7, 4, 8, 0, 5, 4, 5, 8, 0, 9, 3, 6, 8 },
+		{ 6, 4, 8, 5, 0, 1, 4, 2, 7, 7, 7, 2, 0 },
+		{ 0, 1, 4, 4, 1, 0, 7, 4, 4, 2, 4, 2, 6 },
+		{ 1, 2, 3, 5, 4, 7, 0, 7, 1, 2, 2, 9, 8 },
+		{ 4, 3, 6, 8, 2, 4, 7, 0, 8, 4, 2, 3, 2 },
+		{ 4, 2, 5, 0, 7, 4, 1, 8, 0, 2, 5, 8, 1 },
+		{ 5, 0, 3, 9, 7, 2, 2, 4, 2, 0, 5, 9, 7 },
+		{ 6, 1, 6, 3, 7, 4, 2, 2, 5, 5, 0, 9, 6 },
+		{ 6, 4, 6, 6, 2, 2, 9, 3, 8, 9, 9, 0, 5 },
+		{ 7, 2, 5, 8, 0, 6, 8, 2, 1, 7, 6, 5, 0 }
+	};
+	vector<bool> visited_matrix(matrix.size(), 0);
+	vector<int> path_matrix;
+	print_matrix(matrix);
+	cout << "Hamilton way: " << hamilton(matrix, visited_matrix, path_matrix, 0, true) << endl;
+	cout << "Hamilton cycle: " << hamilton(matrix, visited_matrix, path_matrix, 0, false) << endl;
+
+	return 0;
 }
