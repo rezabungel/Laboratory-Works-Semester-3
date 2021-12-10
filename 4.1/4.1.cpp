@@ -213,7 +213,7 @@ int main()
 	print_matrix(matrix);
 	vector<vector<int> > f_matrix;
 	FillMatrixWith(f_matrix, matrix.size(), matrix.size(), 0);
-	cout << "\nResult: " << MaxFlow(f_matrix, matrix, source, matrix.size()-1, matrix.size());
+	cout << "\nResult: " << MaxFlow(f_matrix, matrix, source, matrix.size() - 1, matrix.size());
 
 	return 0;
 }
